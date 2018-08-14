@@ -1,0 +1,40 @@
+{
+  "variables": {
+    "proj_id": null,
+    "machine_type": null,
+    "source_image": "ubuntu-1604-xenial-v20180808"
+  },
+  "builders": [
+    {
+      "type": "googlecompute",
+      "project_id": "{{user `proj_id`}}",
+      "image_name": "reddit-base-{{timestamp}}",
+      "source_image": "{{user `source_image`}}",
+      "zone": "asia-southeast1-a",
+      "ssh_username": "appuser",
+      "machine_type": "{{user `machine_type`}}",
+      "image_description": "my first image created by packer",
+      "disk_size": 10,
+      "disk_type": "pd-standard",
+      "network": "default",
+      "tags": [
+      	"puma-server"
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "scripts/install_ruby.sh"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/install_mongodb.sh",
+      "execute_command": "sudo {{.Path}}"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/deploy.sh"
+    }
+  ]
+}
